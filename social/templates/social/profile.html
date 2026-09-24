@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <title>{{ profile_user.username }} - Profile</title>
+</head>
+<body>
+
+    <h1>{{ profile_user.username }}'s Profile</h1>
+
+    <hr>
+
+    <h2>Profile Information</h2>
+
+    <p>
+        <strong>Username:</strong>
+        {{ profile_user.username }}
+    </p>
+
+    <p>
+        <strong>Email:</strong>
+        {{ profile_user.email }}
+    </p>
+
+    <p>
+        <strong>Bio:</strong>
+        {{ profile.bio|default:"No bio added yet." }}
+    </p>
+
+    <hr>
+
+    <h3>Followers: {{ followers_count }}</h3>
+    <h3>Following: {{ following_count }}</h3>
+
+    <hr>
+
+    {% if request.user.id != profile_user.id %}
+
+        {% if is_following %}
+            <form method="POST" action="{% url 'toggle_follow' profile_user.id %}">
+                {% csrf_token %}
+                <button type="submit">Unfollow</button>
+            </form>
+        {% else %}
+            <form method="POST" action="{% url 'toggle_follow' profile_user.id %}">
+                {% csrf_token %}
+                <button type="submit">Follow</button>
+            </form>
+        {% endif %}
+
+    {% endif %}
+
+    <hr>
+
+    <h2>{{ profile_user.username }}'s Posts</h2>
+
+    {% for post in posts %}
+
+        <div>
+            <p>{{ post.content }}</p>
+
+            <small>
+                {{ post.created_at }}
+            </small>
+        </div>
+
+        <hr>
+
+    {% empty %}
+
+        <p>No posts yet.</p>
+
+    {% endfor %}
+
+    <p>
+        <a href="{% url 'home' %}">← Back to Home</a>
+    </p>
+
+</body>
+</html>
